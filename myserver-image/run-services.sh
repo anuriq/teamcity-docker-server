@@ -1,10 +1,14 @@
 #!/bin/bash
 
-echo 'Copy JDBC libs...'
-cp -vR $TEAMCITY_INIT/lib "$TEAMCITY_DATA_PATH/"
+if [! -d "$TEAMCITY_DATA_PATH/lib"]; then
+  echo 'Copy JDBC libs...'
+  cp -vR $TEAMCITY_INIT/lib "$TEAMCITY_DATA_PATH/"
+fi
 
-echo 'Restore golden backup...'
-$TEAMCITY_DIST/bin/maintainDB.sh restore -F $TEAMCITY_INIT/backup_clean_aws.zip -T $TEAMCITY_DATA_PATH/config/database.properties
+if [! -e "$TEAMCITY_DATA_PATH/config/main-config.xml"]; then
+  echo 'Restore golden backup...'
+  $TEAMCITY_DIST/bin/maintainDB.sh restore -F $TEAMCITY_INIT/backup_clean_aws.zip -T $TEAMCITY_DATA_PATH/config/database.properties
+fi
 
 echo '/run-services.sh'
 for entry in /services/*.sh
